@@ -124,8 +124,8 @@ const ProfileScreen = ({ navigation }) => {
                       justifyContent: "center"
                     }}
                   >
-                    {image ? (
-                      <>
+                    {/* {image ? ( */}
+                      {/* <> */}
                         <Image
                           source={{ uri: image }}
                           style={{
@@ -134,22 +134,6 @@ const ProfileScreen = ({ navigation }) => {
                             borderRadius: 16,
                           }}
                         />
-                        <TouchableOpacity onPress={pickImage}>
-                          <Image
-                            source={DeletePhoto}
-                            style={{
-                              position: "absolute",
-                              right: -80,
-                              top: -46,
-                            }}
-                          />
-                        </TouchableOpacity>
-                      </>
-                    ) : (
-                      <TouchableOpacity onPress={pickImage}>
-                        <Image source={AddPhoto} style={styles.addIcon} />
-                      </TouchableOpacity>
-                    )}
                   </View>
                 </View>
                 <Text style={{ ...styles.title }}>{nickName}</Text>

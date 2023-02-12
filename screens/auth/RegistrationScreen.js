@@ -12,6 +12,7 @@ import {
   Pressable,
   Button,
   Image,
+  Alert,
 } from "react-native";
 import { useState, useCallback, useEffect } from "react";
 import { useFonts } from "expo-font";
@@ -109,6 +110,10 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   const onSubmit = () => {
+    if(!image) {
+      Alert.alert('add image please')
+      return
+    }
     dispatch(authSignUpUser({ login, email, password, image }));
     keyboardHide();
     setLogin("");
