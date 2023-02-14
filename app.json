@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "myNewProject",
-    "slug": "myNewProject",
+    "slug": "my-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,16 +18,24 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nazarlyubuska.myproject"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.nazarlyubuska.myproject"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3e2541f4-25a2-438a-b990-35cb527a1d8f"
+      }
+    },
+    "owner": "nazarlyubuska"
   }
 }

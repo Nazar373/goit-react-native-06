@@ -1,6 +1,7 @@
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   Alert,
   Image,
@@ -10,16 +11,19 @@ import {
   TextInput,
   TouchableWithoutFeedback,
   View,
+  Button,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { getStorage, ref, getDownloadURL, uploadBytes } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
-import { useSelector } from "react-redux";
 
 import { db } from "../../firebase/config";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
+  const [isCameraReady, setIsCameraReady] = useState(false);
+  const [permission, requestPermission] = Camera.useCameraPermissions();
+
   const [photo, setPhoto] = useState(null);
   const [title, setTitle] = useState("");
   const [titleLocation, setTitleLocation] = useState("");
@@ -28,6 +32,7 @@ const CreatePostsScreen = ({ navigation }) => {
 
   const [titleBorderColor, setTitleBorderColor] = useState("#E8E8E8");
   const [titleBackgroundColor, setTitleBackgroundColor] = useState("#F6F6F6");
+  
   const [titleLocationBorderColor, setTitleLocationBorderColor] =
     useState("#E8E8E8");
   const [titleLocationBackgroundColor, setTitleLocationBackgroundColor] =
@@ -49,9 +54,31 @@ const CreatePostsScreen = ({ navigation }) => {
   }, []);
 
   const { userId, nickName, email } = useSelector((state) => state.auth);
+
+  if (!permission) {
+    // Camera permissions are still loading
+    return <View />;
+  }
+
+  if (!permission.granted) {
+    // Camera permissions are not granted yet
+    return (
+      <View style={styles.container}>
+        <Text style={{ textAlign: 'center' }}>
+          We need your permission to show the camera
+        </Text>
+        <Button onPress={requestPermission} title="grant permission" />
+      </View>
+    );
+  }
+
+  const onCameraReady = () => {
+    setIsCameraReady(true);
+  };
+
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
-    // console.log({photo, location})
+    console.log({photo})
     setPhoto(photo.uri);
   };
 
@@ -86,20 +113,20 @@ const CreatePostsScreen = ({ navigation }) => {
         titleLocation,
         userId,
         nickName,
-        email
+        email,
       });
     } catch (error) {
-      console.log(error.message)
-      Alert.alert("try again")
+      console.log(error.message);
+      Alert.alert("try again");
     }
   };
 
   const sendPost = async () => {
-    if(!title.trim()) {
-      Alert.alert('Field "title" is required')
+    if (!title.trim()) {
+      Alert.alert('Field "title" is required');
     }
-    if(!location ) {
-      Alert.alert('The location did not uploaded. Try again')
+    if (!location) {
+      Alert.alert("The location did not uploaded. Try again");
     }
 
     uploadPostToServer();
@@ -122,7 +149,11 @@ const CreatePostsScreen = ({ navigation }) => {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
-        <Camera style={styles.camera} ref={setCamera}>
+        <Camera
+          style={styles.camera}
+          onCameraReady={onCameraReady}
+          ref={setCamera}
+        >
           {photo && (
             <View style={styles.takePhotoContainer}>
               <Image
@@ -133,7 +164,7 @@ const CreatePostsScreen = ({ navigation }) => {
           )}
           <TouchableOpacity
             onPress={takePhoto}
-            ref={setCamera}
+            // ref={setCamera}
             style={styles.snapContainer}
           >
             <Text style={styles.snap}>SNAP</Text>
@@ -247,11 +278,11 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 16
+    marginHorizontal: 16,
   },
   btnTitle: {
-    color: "#fff"
-  }
+    color: "#fff",
+  },
 });
 
 export default CreatePostsScreen;
